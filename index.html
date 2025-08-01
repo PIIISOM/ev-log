@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>บันทึกการชาร์จรถ EV</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    input, select, textarea { width: 100%; margin-bottom: 10px; padding: 8px; }
+    button { padding: 10px 15px; }
+    .entry { border-bottom: 1px solid #ccc; margin-bottom: 10px; padding-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h2>บันทึกการชาร์จรถ EV</h2>
+  <form id="chargeForm">
+    <label>📅 วันที่ชาร์จ</label>
+    <input type="date" id="date" required>
+
+    <label>🔌 แอปที่ใช้ชาร์จ</label>
+    <input type="text" id="app" required>
+
+    <label>📍 สถานที่ตั้งเครื่องชาร์จ</label>
+    <input type="text" id="location" required>
+
+    <label>🗺️ จังหวัด</label>
+    <input type="text" id="province" required>
+
+    <label>🚗 เลขไมล์</label>
+    <input type="number" id="odometer" required>
+
+    <label>⚡ พลังงานที่ได้รับ (kWh)</label>
+    <input type="number" id="kwh" step="0.01" required>
+
+    <label>💸 ราคาต่อหน่วย (บาท/kWh)</label>
+    <input type="number" id="price" step="0.01" required>
+
+    <label>⚙️ ประเภทการชาร์จ</label>
+    <select id="chargeType">
+      <option value="AC">AC</option>
+      <option value="DC">DC Fast</option>
+      <option value="อื่นๆ">อื่นๆ</option>
+    </select>
+
+    <label>💳 ช่องทางชำระเงิน</label>
+    <select id="payment">
+      <option value="PromptPay">PromptPay</option>
+      <option value="บัตรเครดิต">บัตรเครดิต</option>
+      <option value="เงินสด">เงินสด</option>
+      <option value="อื่นๆ">อื่นๆ</option>
+    </select>
+
+    <label>📝 หมายเหตุ</label>
+    <textarea id="note" rows="2"></textarea>
+
+    <button type="submit">บันทึก</button>
+  </form>
+
+  <h3>📋 รายการที่บันทึกไว้</h3>
+  <div id="logList"></div>
+
+  <script>
+    const form = document.getElementById('chargeForm');
+    const logList = document.getElementById('logList');
+
+    function loadLogs() {
+      const logs = JSON.parse(localStorage.getItem('evLogs')) || [];
+      logList.innerHTML = '';
+      logs.reverse().forEach(log => {
+        const div = document.createElement('div');
+        div.className = 'entry';
+        div.innerHTML = `
+          <strong>${log.date}</strong> | ${log.app} | ${log.location}, ${log.province}<br>
+          เลขไมล์: ${log.odometer} km<br>
+          ชาร์จ ${log.kwh} kWh × ${log.price} บาท = <strong>${log.total} บาท</strong><br>
+          ประเภท: ${log.chargeType} | จ่ายด้วย: ${log.payment}<br>
+          หมายเหตุ: ${log.note || '-'}
+        `;
+        logList.appendChild(div);
+      });
+    }
+
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const log = {
+        date: document.getElementById('date').value,
+        app: document.getElementById('app').value,
+        location: document.getElementById('location').value,
+        province: document.getElementById('province').value,
+        odometer: parseFloat(document.getElementById('odometer').value),
+        kwh: parseFloat(document.getElementById('kwh').value),
+        price: parseFloat(document.getElementById('price').value),
+        total: parseFloat((document.getElementById('kwh').value * document.getElementById('price').value).toFixed(2)),
+        chargeType: document.getElementById('chargeType').value,
+        payment: document.getElementById('payment').value,
+        note: document.getElementById('note').value,
+      };
+
+      const logs = JSON.parse(localStorage.getItem('evLogs')) || [];
+      logs.push(log);
+      localStorage.setItem('evLogs', JSON.stringify(logs));
+      form.reset();
+      loadLogs();
+    };
+
+    window.onload = loadLogs;
+  </script>
+</body>
+</html>
