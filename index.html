@@ -142,40 +142,7 @@
   <option>อุบลราชธานี</option>
 </select>
 
-    <label>🚗 เลขไมล์</label>
-    <input type="number" id="mileage" name="mileage" required>
-
-    <label>⚡ พลังงานที่ได้รับ (kWh)</label>
-    <input type="number" id="kwh" step="0.01" required>
-
-    <label>💸 ราคาต่อหน่วย (บาท/kWh)</label>
-    <input type="number" id="price" step="0.01" required>
-
-    <label>⚙️ ประเภทการชาร์จ</label>
-    <select id="chargeType">
-      <option value="AC">AC</option>
-      <option value="DC">DC Fast</option>
-      <option value="อื่นๆ">อื่นๆ</option>
-    </select>
-
-    <label>💳 ช่องทางชำระเงิน</label>
-    <select id="payment">
-      <option value="PromptPay">PromptPay</option>
-      <option value="บัตรเครดิต">บัตรเครดิต</option>
-      <option value="เงินสด">เงินสด</option>
-      <option value="อื่นๆ">อื่นๆ</option>
-    </select>
-
-    <label>📝 หมายเหตุ</label>
-    <textarea id="note" rows="2"></textarea>
-
-    <button type="submit">บันทึก</button>
-  </form>
-
-  <h3>📋 รายการที่บันทึกไว้</h3>
-  <div id="logList"></div>
-
-  <script>
+    <script>
     const form = document.getElementById('chargeForm');
     const logList = document.getElementById('logList');
 
@@ -222,6 +189,43 @@
     window.onload = loadLogs;
   </script>
 
+    <label>🚗 เลขไมล์</label>
+    <input type="number" id="mileage" name="mileage" required>
+
+    <label>⚡ พลังงานที่ได้รับ (kWh)</label>
+    <input type="number" id="kwh" step="0.01" required>
+
+    <label>💸 ราคาต่อหน่วย (บาท/kWh)</label>
+    <input type="number" id="cost" name="cost" step="0.01" placeholder="เช่น 120.50"> บาท
+
+    <label for="cost">ค่าใช้จ่ายรวม:</label>
+    <input type="number" id="cost" name="cost" step="0.01" placeholder="เช่น 120.50"> บาท
+
+    <label>⚙️ ประเภทการชาร์จ</label>
+    <select id="chargeType">
+      <option value="AC">AC</option>
+      <option value="DC">DC Fast</option>
+      <option value="อื่นๆ">อื่นๆ</option>
+    </select>
+
+    <label>💳 ช่องทางชำระเงิน</label>
+    <select id="payment">
+      <option value="PromptPay">PromptPay</option>
+      <option value="บัตรเครดิต">บัตรเครดิต</option>
+      <option value="เงินสด">เงินสด</option>
+      <option value="อื่นๆ">อื่นๆ</option>
+    </select>
+
+    <label>📝 หมายเหตุ</label>
+    <textarea id="note" rows="2"></textarea>
+
+    <button type="submit">บันทึก</button>
+  </form>
+
+  <h3>📋 รายการที่บันทึกไว้</h3>
+  <div id="logList"></div>
+
+  
   <script>
   const mileageInput = document.getElementById("mileage");
 
