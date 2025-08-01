@@ -64,6 +64,89 @@
 
     <label>🗺️ จังหวัด</label>
     <input type="text" id="province" required>
+    <label for="province">จังหวัด:</label>
+<select id="province">
+  <option value="">-- เลือกจังหวัด --</option>
+  <option>กรุงเทพมหานคร</option>
+  <option>กระบี่</option>
+  <option>กาญจนบุรี</option>
+  <option>กาฬสินธุ์</option>
+  <option>กำแพงเพชร</option>
+  <option>ขอนแก่น</option>
+  <option>จันทบุรี</option>
+  <option>ฉะเชิงเทรา</option>
+  <option>ชลบุรี</option>
+  <option>ชัยนาท</option>
+  <option>ชัยภูมิ</option>
+  <option>ชุมพร</option>
+  <option>เชียงราย</option>
+  <option>เชียงใหม่</option>
+  <option>ตรัง</option>
+  <option>ตราด</option>
+  <option>ตาก</option>
+  <option>นครนายก</option>
+  <option>นครปฐม</option>
+  <option>นครพนม</option>
+  <option>นครราชสีมา</option>
+  <option>นครศรีธรรมราช</option>
+  <option>นครสวรรค์</option>
+  <option>นนทบุรี</option>
+  <option>นราธิวาส</option>
+  <option>น่าน</option>
+  <option>บึงกาฬ</option>
+  <option>บุรีรัมย์</option>
+  <option>ปทุมธานี</option>
+  <option>ประจวบคีรีขันธ์</option>
+  <option>ปราจีนบุรี</option>
+  <option>ปัตตานี</option>
+  <option>พระนครศรีอยุธยา</option>
+  <option>พะเยา</option>
+  <option>พังงา</option>
+  <option>พัทลุง</option>
+  <option>พิจิตร</option>
+  <option>พิษณุโลก</option>
+  <option>เพชรบุรี</option>
+  <option>เพชรบูรณ์</option>
+  <option>แพร่</option>
+  <option>ภูเก็ต</option>
+  <option>มหาสารคาม</option>
+  <option>มุกดาหาร</option>
+  <option>แม่ฮ่องสอน</option>
+  <option>ยะลา</option>
+  <option>ยโสธร</option>
+  <option>ร้อยเอ็ด</option>
+  <option>ระนอง</option>
+  <option>ระยอง</option>
+  <option>ราชบุรี</option>
+  <option>ลพบุรี</option>
+  <option>ลำปาง</option>
+  <option>ลำพูน</option>
+  <option>เลย</option>
+  <option>ศรีสะเกษ</option>
+  <option>สกลนคร</option>
+  <option>สงขลา</option>
+  <option>สตูล</option>
+  <option>สมุทรปราการ</option>
+  <option>สมุทรสงคราม</option>
+  <option>สมุทรสาคร</option>
+  <option>สระแก้ว</option>
+  <option>สระบุรี</option>
+  <option>สิงห์บุรี</option>
+  <option>สุโขทัย</option>
+  <option>สุพรรณบุรี</option>
+  <option>สุราษฎร์ธานี</option>
+  <option>สุรินทร์</option>
+  <option>หนองคาย</option>
+  <option>หนองบัวลำภู</option>
+  <option>อ่างทอง</option>
+  <option>อำนาจเจริญ</option>
+  <option>อุดรธานี</option>
+  <option>อุตรดิตถ์</option>
+  <option>อุทัยธานี</option>
+  <option>อุบลราชธานี</option>
+</select>
+
+<button type="button" onclick="fillProvinceFromGPS()">ระบุตำแหน่งจังหวัดอัตโนมัติ</button>
 
     <label>🚗 เลขไมล์</label>
     <input type="number" id="odometer" required>
@@ -144,5 +227,41 @@
 
     window.onload = loadLogs;
   </script>
+
+  <script>
+  function fillProvinceFromGPS() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`, {
+          headers: {
+            'User-Agent': 'ev-log-demo (https://github.com/piiisom/ev-log)',
+            'Referer': location.href
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          const province = data.address.state || data.address.county || '';
+          const dropdown = document.getElementById('province');
+          for (let i = 0; i < dropdown.options.length; i++) {
+            if (province.includes(dropdown.options[i].text)) {
+              dropdown.selectedIndex = i;
+              alert("ระบุจังหวัดสำเร็จ: " + dropdown.options[i].text);
+              return;
+            }
+          }
+          alert("ไม่พบจังหวัดในระบบ: " + province);
+        })
+        .catch(error => alert("เกิดข้อผิดพลาด: " + error));
+      }, function(error) {
+        alert("ไม่สามารถระบุตำแหน่งได้: " + error.message);
+      });
+    } else {
+      alert("เบราว์เซอร์ของคุณไม่รองรับการระบุตำแหน่ง");
+    }
+  }
+</script>
 </body>
 </html>
