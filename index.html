@@ -37,6 +37,30 @@
 
     <label>📍 สถานที่ตั้งเครื่องชาร์จ</label>
     <input type="text" id="location" required>
+    <label for="locationName">สถานที่ตั้ง:</label>
+<input type="text" id="locationName" placeholder="พิมพ์ชื่อสถานที่">
+
+<button type="button" onclick="getLocation()">แนบพิกัดอัตโนมัติ</button>
+
+<label for="gpsLocation">พิกัด GPS (ละติจูด, ลองจิจูด):</label>
+<input type="text" id="gpsLocation" placeholder="เช่น 13.7563, 100.5018" readonly>
+
+<script>
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const lat = position.coords.latitude.toFixed(6);
+        const lon = position.coords.longitude.toFixed(6);
+        document.getElementById('gpsLocation').value = `${lat}, ${lon}`;
+        alert('แนบพิกัดเรียบร้อย: ' + lat + ', ' + lon);
+      }, function(error) {
+        alert('ไม่สามารถรับพิกัดได้: ' + error.message);
+      });
+    } else {
+      alert('เบราว์เซอร์ของคุณไม่รองรับการระบุตำแหน่ง');
+    }
+  }
+</script>
 
     <label>🗺️ จังหวัด</label>
     <input type="text" id="province" required>
