@@ -34,10 +34,8 @@
   <option>THAI EV Charger</option>
   <option>ZEV Station</option>
 </select>
-
-    <label>📍 สถานที่ตั้งเครื่องชาร์จ</label>
-    <input type="text" id="location" required>
-    <label for="locationName">สถานที่ตั้ง:</label>
+    
+    <label for="locationName">📍สถานที่ชาร์จ:</label>
 <input type="text" id="locationName" placeholder="พิมพ์ชื่อสถานที่">
 
 <button type="button" onclick="getLocation()">แนบพิกัดอัตโนมัติ</button>
@@ -146,8 +144,6 @@
   <option>อุบลราชธานี</option>
 </select>
 
-<button type="button" onclick="fillProvinceFromGPS()">ระบุตำแหน่งจังหวัดอัตโนมัติ</button>
-
     <label>🚗 เลขไมล์</label>
     <input type="number" id="odometer" required>
 
@@ -227,41 +223,5 @@
 
     window.onload = loadLogs;
   </script>
-
-  <script>
-  function fillProvinceFromGPS() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-
-        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`, {
-          headers: {
-            'User-Agent': 'ev-log-demo (https://github.com/piiisom/ev-log)',
-            'Referer': location.href
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          const province = data.address.state || data.address.county || '';
-          const dropdown = document.getElementById('province');
-          for (let i = 0; i < dropdown.options.length; i++) {
-            if (province.includes(dropdown.options[i].text)) {
-              dropdown.selectedIndex = i;
-              alert("ระบุจังหวัดสำเร็จ: " + dropdown.options[i].text);
-              return;
-            }
-          }
-          alert("ไม่พบจังหวัดในระบบ: " + province);
-        })
-        .catch(error => alert("เกิดข้อผิดพลาด: " + error));
-      }, function(error) {
-        alert("ไม่สามารถระบุตำแหน่งได้: " + error.message);
-      });
-    } else {
-      alert("เบราว์เซอร์ของคุณไม่รองรับการระบุตำแหน่ง");
-    }
-  }
-</script>
 </body>
 </html>
