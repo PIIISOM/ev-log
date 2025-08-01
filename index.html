@@ -145,7 +145,7 @@
 </select>
 
     <label>🚗 เลขไมล์</label>
-    <input type="number" id="odometer" required>
+    <input type="number" id="mileage" name="mileage" required>
 
     <label>⚡ พลังงานที่ได้รับ (kWh)</label>
     <input type="number" id="kwh" step="0.01" required>
@@ -223,5 +223,31 @@
 
     window.onload = loadLogs;
   </script>
+
+  <script>
+  const mileageInput = document.getElementById("mileage");
+
+  // โหลดเลขไมล์ล่าสุดจาก localStorage
+  const lastMileage = localStorage.getItem("lastMileage");
+  if (lastMileage) {
+    mileageInput.placeholder = `เลขไมล์ล่าสุด: ${lastMileage} กม.`;
+  }
+
+  // เช็คเมื่อมีการกรอกข้อมูลใหม่
+  mileageInput.addEventListener("change", () => {
+    const newMileage = parseFloat(mileageInput.value);
+    if (lastMileage && newMileage < parseFloat(lastMileage)) {
+      alert("เลขไมล์ที่กรอกน้อยกว่าครั้งก่อน โปรดตรวจสอบอีกครั้งครับ");
+    }
+  });
+
+  // เมื่อ submit แล้วให้บันทึกเลขไมล์ล่าสุดไว้ใน localStorage
+  const form = document.querySelector("form");
+  form.addEventListener("submit", () => {
+    const currentMileage = mileageInput.value;
+    localStorage.setItem("lastMileage", currentMileage);
+  });
+</script>
+  
 </body>
 </html>
