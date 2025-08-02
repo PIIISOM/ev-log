@@ -1,257 +1,154 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>บันทึกการชาร์จรถ EV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EV Charging Log</title>
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
-    input, select, textarea { width: 100%; margin-bottom: 10px; padding: 8px; }
-    button { padding: 10px 15px; }
-    .entry { border-bottom: 1px solid #ccc; margin-bottom: 10px; padding-bottom: 10px; }
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+    input, select, button, textarea {
+      padding: 8px;
+      margin-top: 5px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      width: auto;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
-  <h2>บันทึกการชาร์จรถ EV</h2>
-  <form id="chargeForm">
-    <label>📅 วันที่ชาร์จ</label>
-    <input type="date" id="date" required>
+  <h1>บันทึกการชาร์จรถไฟฟ้า</h1>
 
-    <label>🔌 แอปที่ใช้ชาร์จ</label>
-<select id="chargeApp" required>
-  <option value="">-- เลือกแอปที่ใช้ชาร์จ --</option>
-  <option>Altervim</option>
-  <option>EA Anywhere</option>
-  <option>EleXA</option>
-  <option>EVolt</option>
-  <option>MEAEV</option>
-  <option>MG i-SMART</option>
-  <option>ONION</option>
-  <option>PEA VOLTA</option>
-  <option>PTT EV Station PluZ</option>
-  <option>REVER SHARGE</option>
-  <option>Shell Recharge</option>
-  <option>Spark</option>
-  <option>THAI EV Charger</option>
-  <option>ZEV Station</option>
-</select>
-    
-    <label for="locationName">📍สถานที่ชาร์จ:</label>
-<input type="text" id="locationName" placeholder="พิมพ์ชื่อสถานที่">
+  <!-- 1. วันที่ -->
+  <label for="date">วันที่ชาร์จ:</label>
+  <input type="date" id="date" name="date">
 
-<button type="button" onclick="getLocation()">แนบพิกัดอัตโนมัติ</button>
+  <!-- 2. แอปที่ใช้ชาร์จ -->
+  <label for="app">แอปที่ใช้ชาร์จ:</label>
+  <select id="app" name="app">
+    <option value="">-- เลือกแอป --</option>
+    <option>Altervim</option>
+    <option>Charge+</option>
+    <option>ChargeNow</option>
+    <option>ChargeSavvy</option>
+    <option>EA Anywhere</option>
+    <option>EleX by EGAT</option>
+    <option>EV Station PluZ</option>
+    <option>Evolt</option>
+    <option>MEA EV</option>
+    <option>PEA VOLTA</option>
+    <option>SHARGE</option>
+    <option>Spark</option>
+  </select>
 
-<label for="gpsLocation">พิกัด GPS (ละติจูด, ลองจิจูด):</label>
-<input type="text" id="gpsLocation" placeholder="เช่น 13.7563, 100.5018" readonly>
+  <!-- 3. สถานที่ตั้ง -->
+  <label for="location">สถานที่ตั้ง:</label>
+  <input type="text" id="location" name="location" placeholder="ชื่อสถานที่">
+  <button type="button" onclick="getLocation()">แนบพิกัด GPS</button>
+  <p id="coordsDisplay"></p>
 
-<script>
-  function getLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        const lat = position.coords.latitude.toFixed(6);
-        const lon = position.coords.longitude.toFixed(6);
-        document.getElementById('gpsLocation').value = `${lat}, ${lon}`;
-        alert('แนบพิกัดเรียบร้อย: ' + lat + ', ' + lon);
-      }, function(error) {
-        alert('ไม่สามารถรับพิกัดได้: ' + error.message);
-      });
-    } else {
-      alert('เบราว์เซอร์ของคุณไม่รองรับการระบุตำแหน่ง');
-    }
-  }
-</script>
+  <!-- 4. จังหวัด -->
+  <label for="province">จังหวัด:</label>
+  <select id="province" name="province">
+    <option value="">-- เลือกจังหวัด --</option>
+  </select>
+  <button type="button" onclick="reverseGeocode()">ดึงจังหวัดจาก GPS</button>
 
-    <label>🗺️ จังหวัด</label>
-<select id="province">
-  <option value="">-- เลือกจังหวัด --</option>
-  <option>กรุงเทพมหานคร</option>
-  <option>กระบี่</option>
-  <option>กาญจนบุรี</option>
-  <option>กาฬสินธุ์</option>
-  <option>กำแพงเพชร</option>
-  <option>ขอนแก่น</option>
-  <option>จันทบุรี</option>
-  <option>ฉะเชิงเทรา</option>
-  <option>ชลบุรี</option>
-  <option>ชัยนาท</option>
-  <option>ชัยภูมิ</option>
-  <option>ชุมพร</option>
-  <option>เชียงราย</option>
-  <option>เชียงใหม่</option>
-  <option>ตรัง</option>
-  <option>ตราด</option>
-  <option>ตาก</option>
-  <option>นครนายก</option>
-  <option>นครปฐม</option>
-  <option>นครพนม</option>
-  <option>นครราชสีมา</option>
-  <option>นครศรีธรรมราช</option>
-  <option>นครสวรรค์</option>
-  <option>นนทบุรี</option>
-  <option>นราธิวาส</option>
-  <option>น่าน</option>
-  <option>บึงกาฬ</option>
-  <option>บุรีรัมย์</option>
-  <option>ปทุมธานี</option>
-  <option>ประจวบคีรีขันธ์</option>
-  <option>ปราจีนบุรี</option>
-  <option>ปัตตานี</option>
-  <option>พระนครศรีอยุธยา</option>
-  <option>พะเยา</option>
-  <option>พังงา</option>
-  <option>พัทลุง</option>
-  <option>พิจิตร</option>
-  <option>พิษณุโลก</option>
-  <option>เพชรบุรี</option>
-  <option>เพชรบูรณ์</option>
-  <option>แพร่</option>
-  <option>ภูเก็ต</option>
-  <option>มหาสารคาม</option>
-  <option>มุกดาหาร</option>
-  <option>แม่ฮ่องสอน</option>
-  <option>ยะลา</option>
-  <option>ยโสธร</option>
-  <option>ร้อยเอ็ด</option>
-  <option>ระนอง</option>
-  <option>ระยอง</option>
-  <option>ราชบุรี</option>
-  <option>ลพบุรี</option>
-  <option>ลำปาง</option>
-  <option>ลำพูน</option>
-  <option>เลย</option>
-  <option>ศรีสะเกษ</option>
-  <option>สกลนคร</option>
-  <option>สงขลา</option>
-  <option>สตูล</option>
-  <option>สมุทรปราการ</option>
-  <option>สมุทรสงคราม</option>
-  <option>สมุทรสาคร</option>
-  <option>สระแก้ว</option>
-  <option>สระบุรี</option>
-  <option>สิงห์บุรี</option>
-  <option>สุโขทัย</option>
-  <option>สุพรรณบุรี</option>
-  <option>สุราษฎร์ธานี</option>
-  <option>สุรินทร์</option>
-  <option>หนองคาย</option>
-  <option>หนองบัวลำภู</option>
-  <option>อ่างทอง</option>
-  <option>อำนาจเจริญ</option>
-  <option>อุดรธานี</option>
-  <option>อุตรดิตถ์</option>
-  <option>อุทัยธานี</option>
-  <option>อุบลราชธานี</option>
-</select>
+  <!-- 5. เลขไมล์ -->
+  <label for="mileage">เลขไมล์ (กม.):</label>
+  <input type="number" id="mileage" name="mileage" min="0" step="1">
 
-    <script>
-    const form = document.getElementById('chargeForm');
-    const logList = document.getElementById('logList');
+  <!-- 6. พลังงานที่ได้รับ -->
+  <label for="energy">พลังงานที่ได้รับ (kWh):</label>
+  <input type="number" id="energy" name="energy" min="0" step="0.01">
 
-    function loadLogs() {
-      const logs = JSON.parse(localStorage.getItem('evLogs')) || [];
-      logList.innerHTML = '';
-      logs.reverse().forEach(log => {
-        const div = document.createElement('div');
-        div.className = 'entry';
-        div.innerHTML = `
-          <strong>${log.date}</strong> | ${log.app} | ${log.location}, ${log.province}<br>
-          เลขไมล์: ${log.odometer} km<br>
-          ชาร์จ ${log.kwh} kWh × ${log.price} บาท = <strong>${log.total} บาท</strong><br>
-          ประเภท: ${log.chargeType} | จ่ายด้วย: ${log.payment}<br>
-          หมายเหตุ: ${log.note || '-'}
-        `;
-        logList.appendChild(div);
-      });
-    }
+  <!-- 7. ค่าใช้จ่ายรวม -->
+  <label for="cost">ค่าใช้จ่ายรวม (บาท):</label>
+  <input type="number" id="cost" name="cost" min="0" step="0.01" onblur="formatDecimal(this)">
 
-    form.onsubmit = (e) => {
-      e.preventDefault();
-      const log = {
-        date: document.getElementById('date').value,
-        app: document.getElementById('app').value,
-        location: document.getElementById('location').value,
-        province: document.getElementById('province').value,
-        odometer: parseFloat(document.getElementById('odometer').value),
-        kwh: parseFloat(document.getElementById('kwh').value),
-        price: parseFloat(document.getElementById('price').value),
-        total: parseFloat((document.getElementById('kwh').value * document.getElementById('price').value).toFixed(2)),
-        chargeType: document.getElementById('chargeType').value,
-        payment: document.getElementById('payment').value,
-        note: document.getElementById('note').value,
-      };
+  <!-- 8. หมายเหตุ -->
+  <label for="note">หมายเหตุ:</label>
+  <textarea id="note" name="note"></textarea>
 
-      const logs = JSON.parse(localStorage.getItem('evLogs')) || [];
-      logs.push(log);
-      localStorage.setItem('evLogs', JSON.stringify(logs));
-      form.reset();
-      loadLogs();
-    };
-
-    window.onload = loadLogs;
-  </script>
-
-    <label>🚗 เลขไมล์</label>
-    <input type="number" id="mileage" name="mileage" required>
-
-    <label>⚡ พลังงานที่ได้รับ (kWh)</label>
-    <input type="number" id="kwh" step="0.01" required>
-
-    <label>💸 ราคาต่อหน่วย (บาท/kWh)</label>
-    <input type="number" id="cost" name="cost" step="0.01" placeholder="เช่น 120.50"> บาท
-
-    <label for="cost">ค่าใช้จ่ายรวม:</label>
-    <input type="number" id="cost" name="cost" step="0.01" placeholder="เช่น 120.50"> บาท
-
-    <label>⚙️ ประเภทการชาร์จ</label>
-    <select id="chargeType">
-      <option value="AC">AC</option>
-      <option value="DC">DC Fast</option>
-      <option value="อื่นๆ">อื่นๆ</option>
-    </select>
-
-    <label>💳 ช่องทางชำระเงิน</label>
-    <select id="payment">
-      <option value="PromptPay">PromptPay</option>
-      <option value="บัตรเครดิต">บัตรเครดิต</option>
-      <option value="เงินสด">เงินสด</option>
-      <option value="True Money">True Money</option>
-      <option value="Cash Wallet">Cash Wallet</option>
-      <option value="อื่นๆ">อื่นๆ</option>
-    </select>
-
-    <label>📝 หมายเหตุ</label>
-    <textarea id="note" rows="2"></textarea>
-
-    <button type="submit">บันทึก</button>
-  </form>
-
-  <h3>📋 รายการที่บันทึกไว้</h3>
-  <div id="logList"></div>
-
-  
   <script>
-  const mileageInput = document.getElementById("mileage");
+    // 1. GPS & พิกัด
+    let lat = null, lon = null;
 
-  // โหลดเลขไมล์ล่าสุดจาก localStorage
-  const lastMileage = localStorage.getItem("lastMileage");
-  if (lastMileage) {
-    mileageInput.placeholder = `เลขไมล์ล่าสุด: ${lastMileage} กม.`;
-  }
-
-  // เช็คเมื่อมีการกรอกข้อมูลใหม่
-  mileageInput.addEventListener("change", () => {
-    const newMileage = parseFloat(mileageInput.value);
-    if (lastMileage && newMileage < parseFloat(lastMileage)) {
-      alert("เลขไมล์ที่กรอกน้อยกว่าครั้งก่อน โปรดตรวจสอบอีกครั้งครับ");
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            lat = pos.coords.latitude.toFixed(6);
+            lon = pos.coords.longitude.toFixed(6);
+            document.getElementById("coordsDisplay").innerText = `ละติจูด: ${lat}, ลองจิจูด: ${lon}`;
+          },
+          (err) => alert("ไม่สามารถเข้าถึงพิกัดได้: " + err.message)
+        );
+      } else {
+        alert("เบราว์เซอร์ของคุณไม่รองรับการใช้ GPS");
+      }
     }
-  });
 
-  // เมื่อ submit แล้วให้บันทึกเลขไมล์ล่าสุดไว้ใน localStorage
-  const form = document.querySelector("form");
-  form.addEventListener("submit", () => {
-    const currentMileage = mileageInput.value;
-    localStorage.setItem("lastMileage", currentMileage);
-  });
-</script>
-  
+    // 2. ดึงจังหวัดจากพิกัดด้วย Nominatim
+    function reverseGeocode() {
+      if (!lat || !lon) {
+        alert("กรุณาแนบพิกัดก่อน");
+        return;
+      }
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+        .then(res => res.json())
+        .then(data => {
+          const province = data.address.state || data.address.county || "";
+          const dropdown = document.getElementById("province");
+          for (let option of dropdown.options) {
+            if (province.includes(option.value) || option.value.includes(province)) {
+              dropdown.value = option.value;
+              return;
+            }
+          }
+          alert("ไม่พบจังหวัดที่ตรงกับพิกัด");
+        })
+        .catch(err => alert("เกิดข้อผิดพลาดในการดึงจังหวัด: " + err));
+    }
+
+    // 3. รายชื่อจังหวัดไทย
+    const provinces = [
+      "กรุงเทพมหานคร", "กระบี่", "กาญจนบุรี", "กาฬสินธุ์", "กำแพงเพชร", "ขอนแก่น", "จันทบุรี",
+      "ฉะเชิงเทรา", "ชลบุรี", "ชัยนาท", "ชัยภูมิ", "ชุมพร", "เชียงราย", "เชียงใหม่",
+      "ตรัง", "ตราด", "ตาก", "นครนายก", "นครปฐม", "นครพนม", "นครราชสีมา", "นครศรีธรรมราช",
+      "นครสวรรค์", "นนทบุรี", "นราธิวาส", "น่าน", "บึงกาฬ", "บุรีรัมย์", "ปทุมธานี", "ประจวบคีรีขันธ์",
+      "ปราจีนบุรี", "ปัตตานี", "พระนครศรีอยุธยา", "พะเยา", "พังงา", "พัทลุง", "พิจิตร", "พิษณุโลก",
+      "เพชรบุรี", "เพชรบูรณ์", "แพร่", "ภูเก็ต", "มหาสารคาม", "มุกดาหาร", "แม่ฮ่องสอน", "ยโสธร",
+      "ยะลา", "ร้อยเอ็ด", "ระนอง", "ระยอง", "ราชบุรี", "ลพบุรี", "ลำปาง", "ลำพูน", "เลย", "ศรีสะเกษ",
+      "สกลนคร", "สงขลา", "สตูล", "สมุทรปราการ", "สมุทรสงคราม", "สมุทรสาคร", "สระแก้ว", "สระบุรี",
+      "สิงห์บุรี", "สุโขทัย", "สุพรรณบุรี", "สุราษฎร์ธานี", "สุรินทร์", "หนองคาย", "หนองบัวลำภู",
+      "อ่างทอง", "อุดรธานี", "อุตรดิตถ์", "อุทัยธานี", "อุบลราชธานี", "อำนาจเจริญ"
+    ];
+    provinces.sort((a, b) => a === "กรุงเทพมหานคร" ? -1 : b === "กรุงเทพมหานคร" ? 1 : a.localeCompare(b));
+    const provinceSelect = document.getElementById("province");
+    provinces.forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p;
+      opt.textContent = p;
+      provinceSelect.appendChild(opt);
+    });
+
+    // 4. ใส่ทศนิยมอัตโนมัติ
+    function formatDecimal(input) {
+      if (input.value && !input.value.includes(".")) {
+        input.value = parseFloat(input.value).toFixed(2);
+      }
+    }
+  </script>
 </body>
 </html>
