@@ -164,7 +164,7 @@
   <label>⚙️ ประเภทการชาร์จ</label>
     <select id="chargeType">
       <option value="AC">AC</option>
-      <option value="DC">DC Fast</option>
+      <option value="DC">DC</option>
       <option value="อื่นๆ">อื่นๆ</option>
     </select>
 
@@ -251,6 +251,55 @@ cost.addEventListener("blur", () => {
   }
 });
 </script>
+
+  //  Firebase SDK 
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDHz1u8a1LaiIKoyp4753Wh1m6WZ-t50H0",
+    authDomain: "ev-log-70e82.firebaseapp.com",
+    projectId: "ev-log-70e82",
+    storageBucket: "ev-log-70e82.firebasestorage.app",
+    messagingSenderId: "330743980981",
+    appId: "1:330743980981:web:6a27918a3c3a107eabaffc",
+    measurementId: "G-2GDVZ0GEZK"
+};
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
+
+    // โค้ดสำหรับบันทึกข้อมูล 
+  <script>
+    document.getElementById("evForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const formData = {
+        chargeDate: this.chargeDate.value,
+        chargingApp: this.chargingApp.value,
+        location: this.location.value,
+        gps: this.gps.value,
+        province: this.province.value,
+        odometer: parseFloat(this.odometer.value),
+        energyReceived: parseFloat(this.energyReceived.value),
+        totalCost: parseFloat(this.totalCost.value),
+        chargeType: document.getElementById("chargeType").value,
+        paymentMethod: this.paymentMethod.value,
+        notes: this.notes.value,
+        timestamp: new Date().toISOString()
+      };
+
+      db.ref("chargingLogs").push(formData)
+        .then(() => {
+          alert("บันทึกสำเร็จ!");
+          this.reset();
+        })
+        .catch((err) => {
+          console.error(err);
+          alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+        });
+    });
+  </script>
 
 </body>
 </html>
